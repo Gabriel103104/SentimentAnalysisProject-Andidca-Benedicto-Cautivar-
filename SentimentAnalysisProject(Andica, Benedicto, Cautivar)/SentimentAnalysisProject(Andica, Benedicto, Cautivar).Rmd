@@ -1,0 +1,284 @@
+---
+title: "SentimentAnalysisProject"
+author: "Andica, Benedicto, Cautivar"
+date: "2024-12-07"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Reading the tweetsDF.csv file
+```{r}
+library(dplyr)
+library(ggplot2)
+library(stringr)
+
+tweetsDF <- read.csv("tweetsDF.csv")
+```
+# Cleaning Text
+```{r}
+tweetsDF$text <- iconv(tweetsDF$text, from = "UTF-8", to = "ASCII//TRANSLIT", sub = "")
+keywords <- "\\b(blackpink|yg|bornpink|lisa|jennie|rose|jisoo)\\b|:\\(\\(|&amp;|!|:\\(|&lt;/3|:|&lt;|/|~|iphone|android|nody_meow,|rogue_corq,|apobang27095028,|dessouslevide,|junacrawf0rd,|idkaybictdie,|lhcwesq4iebpbzf,|bpbiggestggindw,|lovemyhead,|akinsolaaliu,|nhlandmlb_fan,|virgini47003223,|angelscrown_,|stacebu,|starlight_sasha,|yuna4lifer,|diandianwong,|dillikahoshi,|tomie_jpg,|biyulving,|jshms9|1ov,|run_pjm,|lae__loner,|ariana_n64,|hdragees,|leemandelo,|purpleocean_i,|wildcatalum,|koreankrueger,|straykldswoo,|siang_ping,|lovemyheadwrap,|nyeongive,|cryptocross0ver|reexrco,|clarefl96567112,|wsbt,|killugoners,|maimechantel,|thealexateam,|ttaesthicx,|juliana62208602,|sadfuk99,|the_inspi,|hyckgasm,|hooriapashaa,|seungri_italy,|rawmilklvr,|laurettaland,|amaarzahid,|andiroo_,|__borntoslay_,|gothwolfjk,|3bbbinlove,|globalmyeon,|tianz17,|2korad,|doncastor4,|lesbi,|yolanda71545557,|mochixjm,|nunupaws,|simoncropp,|aoife,|btsvoque,|jeongpark52,|cloudychiwoo,|kaiewitherloavc,|yerimlvs,|mochixjm1,|tear_ofgod,|frothfather,|moatybuns,|richiericil,|maggiemae2019,|ckyunstd,|cyborgslament,|hyukasplush,|cxcileyyyy,|jungwoohehet,|lostinminhyuk,|crazyemio,|cbsaustin,|backtobleuside,|arches_in,|shelleypowers,|christineirishg,|bubblephehe,|minsmitten,|kaysfalling,|verrerenebi,|ntm23,|auroraluvbot,|my_drama_list,|kindordie,|kaede_zen,|luvskeehoo,"
+
+
+tweetsDF$text <- tolower(tweetsDF$text)
+tweetsDF$text <- gsub("https\\S+", "", tweetsDF$text)
+tweetsDF$text <- gsub("#", "", gsub("\n", " ", tweetsDF$text))
+tweetsDF$text <- gsub("([@?]\\S+)", "", tweetsDF$text)
+tweetsDF$text <- gsub("\\?", "", tweetsDF$text)
+tweetsDF$text <- gsub("\\b\\d{2}\\.\\d{2}\\.\\d{4}\\b", "", tweetsDF$text)
+tweetsDF$text <- gsub(keywords, "", tweetsDF$text, ignore.case = TRUE)
+tweetsDF$text <- gsub("<a href=httptwitter.comdownloadandroid rel=nofollow>twitter for android<a>", "", tweetsDF$text)
+tweetsDF$text <- gsub("<a href= rel=nofollow>twitter web app<a>", "", tweetsDF$text)
+tweetsDF$text <- gsub("<a href=httptwitter.comdownloadiphone rel=nofollow>twitter for iphone<a>", "", tweetsDF$text)
+tweetsDF$text <- gsub("<a href=([^>]*?) rel=nofollow>([^<]*?)<a>", "", tweetsDF$text)
+tweetsDF$text <- gsub("30102022", "", tweetsDF$text)
+tweetsDF$text <- gsub("2238,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2237,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2236,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2235", "", tweetsDF$text)
+tweetsDF$text <- gsub("2300,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2332,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2331,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2330,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2200,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2228,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2229,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2225,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2218,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2215,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2211,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2208,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2159,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2155,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2150,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2148,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2149,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2151,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2152,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2153,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2154,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2147,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2146,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2145,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2140,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2141,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2142,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2143,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2144,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2130,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2131,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2132,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2133,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2134,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2135,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2136,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2137,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2138,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2139,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2231,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2230,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2020,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2100,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2120,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2121,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2122,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2123,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2124,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2125,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2126,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2127,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2128,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2129,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2130,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2110,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2109,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2108,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2107,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2106,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2105,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2104,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2103,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2102,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2101,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2050,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2051,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2052,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2053,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2054,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2055,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2056,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2057,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2058,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2059,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2060,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2030,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2031,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2032,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2033,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2034,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2035,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2036,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2037,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2038,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2039,", "", tweetsDF$text)
+tweetsDF$text <- gsub("2040,", "", tweetsDF$text)
+tweetsDF$text <- gsub("\\b(1[0-9]{3}|20[0-3][0-9])\\b", "", tweetsDF$text)
+tweetsDF$text <- gsub("\\b(20[0-9]{2}|2100)\\b", "", tweetsDF$text)
+tweetsDF$text <- gsub("\\b(21[0-9]{2}|2200)\\b", "", tweetsDF$text)
+tweetsDF$text <- gsub("\\b(22[0-9]{2}|2300)\\b", "", tweetsDF$text)
+
+
+
+
+tweetsDF$text <- gsub("\\s+", " ", tweetsDF$text)
+
+tweetsDF$text
+```
+
+# Cleaning Dates
+```{r}
+tweetsDF$Created_At_Round <- as.POSIXct(tweetsDF$Created_At_Round, format = "%d/%m/%Y %H:%M", tz = "UTC")
+
+tweetsDF$date <- as.Date(tweetsDF$Created_At_Round)
+tweetsDF$hour <- format(tweetsDF$Created_At_Round, "%H")
+
+groupedData <- tweetsDF %>%
+  group_by(date, hour) %>%
+  summarise(count = n(), .groups = "drop")
+
+groupedData$hour <- as.numeric(groupedData$hour)
+
+ggplot(groupedData, aes(x = hour, y = count, color = as.factor(date), group = date)) +
+  geom_line() +
+  labs(
+    title = "Tweet Counts Grouped by Hour for Each Day",
+    x = "Hour of the Day",
+    y = "Tweet Count",
+    color = "Date"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "right")
+
+dailyCounts <- tweetsDF %>%
+  group_by(date) %>%
+  summarise(total_tweets = n(), .groups = "drop")
+
+print(dailyCounts)
+
+ggplot(dailyCounts, aes(x = date, y = total_tweets)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(
+    title = "Total Tweet Counts by Day",
+    x = "Date",
+    y = "Tweet Count"
+  ) +
+  theme_minimal()
+
+tweetsDF$date <- as.Date(tweetsDF$Created_At_Round)
+tweetsDF$hour <- format(tweetsDF$Created_At_Round, "%H")
+
+tweets_per_hour_per_date <- tweetsDF %>%
+  group_by(date, hour) %>%
+  summarise(tweet_count = n(), .groups = "drop")
+
+tweets_per_hour_per_date$hour <- as.numeric(tweets_per_hour_per_date$hour)
+
+print(tweets_per_hour_per_date)
+
+
+
+```
+
+
+# Cleaning the StatucSource Column
+```{r}
+tweetsDF$statusSource_clean <- gsub("<.*?>", "", tweetsDF$statusSource)
+
+statusCounts <- table(tweetsDF$statusSource_clean)
+
+barplot(statusCounts, 
+        main = "Tweet Source Distribution", 
+        xlab = "Platform", 
+        ylab = "Number of Tweets", 
+        col = rainbow(length(statusCounts)), 
+        las = 2,              
+        cex.axis = 0.15)         
+```
+#The first graph, a bar plot, illustrates the distribution of tweets across various source platforms. It reveals a highly skewed pattern, where a small number of dominant platforms, such as Twitter for iPhone and Twitter for Android, contribute the majority of tweets. Meanwhile, most other sources show minimal tweet counts. This emphasizes the significant role mainstream platforms play in driving Twitter activity, while less prominent sources have little impact on overall tweet volumes.
+
+
+
+
+
+
+# Compare Platforms over-time
+```{r}
+tweetsDF$Created_At_Round <- as.Date(tweetsDF$Created_At_Round)
+
+platformTimeSeries <- table(tweetsDF$Created_At_Round, tweetsDF$statusSource_clean)
+
+platformTimeSeriesDF <- as.data.frame(platformTimeSeries)
+
+library(tidyr)
+platformTimeSeriesReshaped <- platformTimeSeriesDF %>%
+  pivot_wider(names_from = Var2, values_from = Freq, values_fill = list(Freq = 0))
+
+platformTimeSeriesReshaped$Var1 <- as.Date(platformTimeSeriesReshaped$Var1)
+
+all_dates <- seq(min(platformTimeSeriesReshaped$Var1), max(platformTimeSeriesReshaped$Var1), by = "day")
+platformTimeSeriesReshaped <- merge(platformTimeSeriesReshaped, data.frame(Var1 = all_dates), by = "Var1", all = TRUE)
+
+library(reshape2)
+platformTimeSeriesLong <- melt(platformTimeSeriesReshaped, id.vars = "Var1", variable.name = "Platform", value.name = "TweetCount")
+
+library(ggplot2)
+ggplot(platformTimeSeriesLong, aes(x = Var1, y = TweetCount, color = Platform)) +
+  geom_line() +
+  labs(x = "Date", y = "Number of Tweets", title = "Tweets by Platform Over Time") +
+  theme_minimal() +
+  theme(legend.title = element_blank())
+
+```
+
+
+#The second graph provides a detailed list of the various platforms and apps used as tweet sources. It highlights the extensive diversity of tools integrated with Twitter, including both popular and niche platforms. The presence of many low-contribution sources suggests that some are specialized tools or automated systems (bots) with limited activity. This diversity showcases Twitter's versatility in accommodating a wide range of users and applications, from casual users to businesses leveraging automated posting tools.
+
+
+
+
+
+
+# Chunk of Codes for Cleaning and Making an Graph about the TweetSource(Iphone, Android, others etc.)
+```{r}
+library(ggplot2)
+library(readr)
+library(dplyr)
+
+print(colnames(tweetsDF))
+```
+
+```{r}
+TweetSourceCounts <- tweetsDF %>%
+  group_by(tweetSource) %>%
+  summarize(Count = n()) %>%
+  arrange(desc(Count))
+
+TweetSourceCounts$tweetSource <- factor(TweetSourceCounts$tweetSource, 
+                                          levels = TweetSourceCounts$tweetSource)
+
+
+ggplot(TweetSourceCounts, aes(x = reorder(tweetSource, -Count), y = Count, fill = tweetSource)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Tweet Source Comparison",
+       x = "Tweet Source",
+       y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_manual(values = c("iphone" = "red", "android" = "orange", "others" = "yellow", "ipad" = "blue", "ifttt" = "green", "dlvr.it" = "violet"))
+```
+
+# The graph titled "Tweet Source Comparison" illustrates the distribution of tweets based on their source. The majority of tweets are posted using iPhone and Android, which dominate the chart with the highest counts. These two sources significantly outperform others, highlighting their widespread use among Twitter users. The third most common source is categorized as Others, though its count is notably lower compared to iPhone and Android. Meanwhile, platforms like iPad, ifttt, and dlvr.it contribute only a small fraction of tweets, indicating limited usage.
+
+# This distribution suggests that mobile devices, particularly iPhones and Android smartphones, are the primary tools for engaging on Twitter. The "Others" category likely represents a mix of niche or less common platforms. Automated tools like ifttt and dlvr.it are used sparingly, possibly for specific purposes such as scheduled or automated posts. Businesses and marketers looking to target Twitter users should prioritize strategies that cater to mobile users, particularly those on iPhone and Android devices, given their overwhelming share. Further analysis of the "Others" category might reveal additional insights about underutilized platforms or unique user behaviors.
