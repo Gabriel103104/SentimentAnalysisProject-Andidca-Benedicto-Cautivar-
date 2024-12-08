@@ -49,6 +49,12 @@ start_row <- 1
 end_row <- 1000
 chunk_data <- tweetsDF[start_row:end_row, ]
 
+chunk_data
+
+write.csv(chunk_data, "cleaned_tweets.csv", row.names = FALSE)
+
+write.csv(tweetsDF, "processed_tweets.csv", row.names = FALSE)
+
 valid_texts <- chunk_data$text[chunk_data$text != ""]
 cat("Number of valid texts before preprocessing: ", length(valid_texts), "\n")
 
