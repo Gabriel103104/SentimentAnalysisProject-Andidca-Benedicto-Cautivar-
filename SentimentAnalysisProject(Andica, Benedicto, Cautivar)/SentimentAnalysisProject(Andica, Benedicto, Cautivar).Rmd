@@ -18,6 +18,7 @@ library(syuzhet)
 library(tm)            
 library(wordcloud)     
 library(RColorBrewer)
+library(lubridate)
 
 tweetsDF <- read.csv("tweetsDF.csv")
 ```
@@ -98,52 +99,46 @@ tweetsDF$Created_At_Round <- as.POSIXct(tweetsDF$Created_At_Round, format = "%d/
 tweetsDF$date <- as.Date(tweetsDF$Created_At_Round)
 tweetsDF$hour <- format(tweetsDF$Created_At_Round, "%H")
 
-groupedData <- tweetsDF %>%
+hourly_tweets <- tweetsDF %>%
   group_by(date, hour) %>%
-  summarise(count = n(), .groups = "drop")
+  summarise(tweet_count = n(), .groups = "drop") %>%
+  mutate(hour = as.numeric(hour))
 
-groupedData$hour <- as.numeric(groupedData$hour)
+plots <- lapply(unique(hourly_tweets$date), function(current_date) {
+  # Filter data for the current date
+  date_data <- hourly_tweets %>% 
+    filter(date == current_date)
+  
+  ggplot(date_data, aes(x = hour, y = tweet_count)) +
+    geom_line(color = "blue", linewidth = 1) +
+    geom_point(color = "red") +
+    geom_text(aes(label = tweet_count), vjust = -0.5, color = "black", size = 3) +
+    scale_x_continuous(breaks = 0:23) +
+    labs(
+      title = paste("Tweet Counts on", format(current_date, "%B %d, %Y")),
+      x = "Hour of the Day",
+      y = "Number of Tweets"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+})
 
-ggplot(groupedData, aes(x = hour, y = count, color = as.factor(date), group = date)) +
-  geom_line() +
-  labs(
-    title = "Tweet Counts Grouped by Hour for Each Day",
-    x = "Hour of the Day",
-    y = "Tweet Count",
-    color = "Date"
-  ) +
-  theme_minimal() +
-  theme(legend.position = "right")
+for(i in seq_along(plots)) {
+  print(plots[[i]])
+}
 
-dailyCounts <- tweetsDF %>%
+summary_per_date <- tweetsDF %>%
   group_by(date) %>%
-  summarise(total_tweets = n(), .groups = "drop")
-
-print(dailyCounts)
-
-ggplot(dailyCounts, aes(x = date, y = total_tweets)) +
-  geom_bar(stat = "identity", fill = "skyblue") +
-  labs(
-    title = "Total Tweet Counts by Day",
-    x = "Date",
-    y = "Tweet Count"
-  ) +
-  theme_minimal()
-
-tweetsDF$date <- as.Date(tweetsDF$Created_At_Round)
-tweetsDF$hour <- format(tweetsDF$Created_At_Round, "%H")
-
-tweets_per_hour_per_date <- tweetsDF %>%
-  group_by(date, hour) %>%
-  summarise(tweet_count = n(), .groups = "drop")
-
-tweets_per_hour_per_date$hour <- as.numeric(tweets_per_hour_per_date$hour)
-
-print(tweets_per_hour_per_date)
-
+  summarise(
+    total_tweets = n(),
+    unique_hours = n_distinct(format(Created_At_Round, "%H"))
+  )
+print(summary_per_date)
 
 
 ```
+# The time series graph provides a comprehensive visualization of tweet activity across a single day, displaying the number of tweets for each hour from 0 to 23. Represented by a blue line with red points, the graph offers a granular view of tweet distribution throughout the day. By showcasing the exact tweet count through black text labels, it reveals the hourly fluctuations in social media engagement. The visualization allows for quick insights into peak activity periods and less active hours, potentially highlighting the daily rhythm of tweet interactions.
+#When analyzing the graph, one can observe the subtle nuances of tweet patterns. The peaks and valleys in the line graph might correspond to specific times of day when users are more likely to be active, such as morning commutes, lunch breaks, or evening leisure time. These patterns could be influenced by factors like work schedules, current events, or the nature of the specific topic or community being analyzed. The graph transforms raw numerical data into a visually intuitive representation, making it easier to understand the temporal dynamics of tweet frequency and identify potential trends or anomalies in social media activity.
 
 
 # Cleaning the StatucSource Column
