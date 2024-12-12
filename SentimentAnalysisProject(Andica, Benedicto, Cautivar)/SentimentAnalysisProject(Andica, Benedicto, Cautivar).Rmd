@@ -91,6 +91,8 @@ if (length(valid_texts) > 0) {
   cat("No valid texts available to create a word cloud.\n")
 }
 ```
+#NOTE: for the Wordcloud, it can change by changing also the range you want from the code above.
+
 
 # Cleaning Dates
 ```{r}
@@ -137,8 +139,23 @@ print(summary_per_date)
 
 
 ```
-# The time series graph provides a comprehensive visualization of tweet activity across a single day, displaying the number of tweets for each hour from 0 to 23. Represented by a blue line with red points, the graph offers a granular view of tweet distribution throughout the day. By showcasing the exact tweet count through black text labels, it reveals the hourly fluctuations in social media engagement. The visualization allows for quick insights into peak activity periods and less active hours, potentially highlighting the daily rhythm of tweet interactions.
-#When analyzing the graph, one can observe the subtle nuances of tweet patterns. The peaks and valleys in the line graph might correspond to specific times of day when users are more likely to be active, such as morning commutes, lunch breaks, or evening leisure time. These patterns could be influenced by factors like work schedules, current events, or the nature of the specific topic or community being analyzed. The graph transforms raw numerical data into a visually intuitive representation, making it easier to understand the temporal dynamics of tweet frequency and identify potential trends or anomalies in social media activity.
+# 1. Graph for October 28, 2022:
+#This graph displays a more detailed distribution of tweets across 24 hours. Tweet activity fluctuates throughout the day, with peaks at hours like 2 AM, 3 AM, and 10 PM, where the count reaches 13 tweets, 12 tweets, and 11 tweets respectively. There are noticeable valleys during other hours, such as 6 AM and 9 PM.
+#Insight: The variability suggests that tweet activity on this day may align with specific events or user engagement patterns, such as late-night or evening activity. Peaks likely coincide with events or discussions of interest at those times.
+
+# 2. Graph for October 29, 2022:
+#This graph illustrates a dramatic spike in tweet counts during the late afternoon (4 PM to 7 PM), where the count surges to a maximum of 3,791 tweets at 7 PM. The activity is minimal for the rest of the day, with a slight recovery around 10 PM (2,240 tweets).
+#Insight: The sharp rise and high volume of tweets suggest a major event or trending topic occurred in the late afternoon and early evening. This pattern contrasts with the otherwise low activity during the rest of the day.
+
+# 3. Graph for October 30, 2022:
+# This graph shows tweet counts across the hours of October 30, 2022. The x-axis represents the hours of the day (0 to 23), while the y-axis shows the number of tweets.
+#The data reveals a peak in activity at 2 AM, with 3,456 tweets, followed by a sharp decline by 4 AM. From there, tweet counts gradually decrease until reaching a low of 324 tweets at 10 PM. There is some fluctuation, with a slight increase in the late morning and early afternoon, peaking again at 1 PM with 1,515 tweets, before continuing the downward trend toward the evening.
+#An insight from this graph is that tweet activity is highest during early morning hours, possibly indicating late-night discussions or time zone effects. The decrease in activity throughout the day suggests that users tweet less in the evening. This pattern could be useful for scheduling content to maximize engagement.
+
+# 4.Graph for October 31, 2022:
+#This graph shows only one data point, indicating a total of 197 tweets recorded at a specific hour. The flat, singular point suggests a lack of detailed hourly data or minimal tweet activity spread across the day.
+#Insight: The activity on this day is sparse or represents incomplete data, which makes it hard to draw meaningful conclusions.
+
 
 
 # Cleaning the StatucSource Column
@@ -156,48 +173,6 @@ barplot(statusCounts,
         cex.axis = 0.15)         
 ```
 #The first graph, a bar plot, illustrates the distribution of tweets across various source platforms. It reveals a highly skewed pattern, where a small number of dominant platforms, such as Twitter for iPhone and Twitter for Android, contribute the majority of tweets. Meanwhile, most other sources show minimal tweet counts. This emphasizes the significant role mainstream platforms play in driving Twitter activity, while less prominent sources have little impact on overall tweet volumes.
-
-
-
-
-
-
-# Compare Platforms over-time
-```{r}
-tweetsDF$Created_At_Round <- as.Date(tweetsDF$Created_At_Round)
-
-platformTimeSeries <- table(tweetsDF$Created_At_Round, tweetsDF$statusSource_clean)
-
-platformTimeSeriesDF <- as.data.frame(platformTimeSeries)
-
-library(tidyr)
-platformTimeSeriesReshaped <- platformTimeSeriesDF %>%
-  pivot_wider(names_from = Var2, values_from = Freq, values_fill = list(Freq = 0))
-
-platformTimeSeriesReshaped$Var1 <- as.Date(platformTimeSeriesReshaped$Var1)
-
-all_dates <- seq(min(platformTimeSeriesReshaped$Var1), max(platformTimeSeriesReshaped$Var1), by = "day")
-platformTimeSeriesReshaped <- merge(platformTimeSeriesReshaped, data.frame(Var1 = all_dates), by = "Var1", all = TRUE)
-
-library(reshape2)
-platformTimeSeriesLong <- melt(platformTimeSeriesReshaped, id.vars = "Var1", variable.name = "Platform", value.name = "TweetCount")
-
-library(ggplot2)
-ggplot(platformTimeSeriesLong, aes(x = Var1, y = TweetCount, color = Platform)) +
-  geom_line() +
-  labs(x = "Date", y = "Number of Tweets", title = "Tweets by Platform Over Time") +
-  theme_minimal() +
-  theme(legend.title = element_blank())
-
-```
-
-
-#The second graph provides a detailed list of the various platforms and apps used as tweet sources. It highlights the extensive diversity of tools integrated with Twitter, including both popular and niche platforms. The presence of many low-contribution sources suggests that some are specialized tools or automated systems (bots) with limited activity. This diversity showcases Twitter's versatility in accommodating a wide range of users and applications, from casual users to businesses leveraging automated posting tools.
-
-
-
-
-
 
 # Chunk of Codes for Cleaning and Making an Graph about the TweetSource(Iphone, Android, others etc.)
 ```{r}
@@ -228,10 +203,9 @@ ggplot(TweetSourceCounts, aes(x = reorder(tweetSource, -Count), y = Count, fill 
   scale_fill_manual(values = c("iphone" = "red", "android" = "orange", "others" = "yellow", "ipad" = "blue", "ifttt" = "green", "dlvr.it" = "violet"))
 ```
 
-# The graph titled "Tweet Source Comparison" illustrates the distribution of tweets based on their source. The majority of tweets are posted using iPhone and Android, which dominate the chart with the highest counts. These two sources significantly outperform others, highlighting their widespread use among Twitter users. The third most common source is categorized as Others, though its count is notably lower compared to iPhone and Android. Meanwhile, platforms like iPad, ifttt, and dlvr.it contribute only a small fraction of tweets, indicating limited usage.
-
-# This distribution suggests that mobile devices, particularly iPhones and Android smartphones, are the primary tools for engaging on Twitter. The "Others" category likely represents a mix of niche or less common platforms. Automated tools like ifttt and dlvr.it are used sparingly, possibly for specific purposes such as scheduled or automated posts. Businesses and marketers looking to target Twitter users should prioritize strategies that cater to mobile users, particularly those on iPhone and Android devices, given their overwhelming share. Further analysis of the "Others" category might reveal additional insights about underutilized platforms or unique user behaviors.
-
+# This bar chart compares the number of tweets across different sources. The x-axis represents the tweet sources (e.g., iPhone, Android, others), and the y-axis shows the count of tweets.
+#The iPhone and Android are the most popular sources, with iPhone slightly leading in tweet count, followed closely by Android. The "others" category is the third-largest contributor but significantly lower than the first two. Other sources, such as iPad, IFTTT, and dlvr.it, have minimal tweet counts.
+#An insight from this chart is that most tweets are generated from mobile devices, particularly iPhones and Androids, highlighting their dominance as platforms for social media engagement. Other sources contribute relatively little to the overall tweet volume. This could reflect platform preferences among users or device availability.
 ```{r}
 
 
@@ -257,4 +231,6 @@ ggplot(sentiment_by_source, aes(x = tweetSource, y = count, fill = sentiment_cat
   ) +
   theme_minimal()
 ```
-# The grouped bar chart provides valuable insights into the sentiment distribution of tweets across different sources, such as iPhone, Android, and other platforms. By examining the chart, we can observe which sentiment is most dominant for each tweet source. For example, tweets from platforms like "iPhone" may have a higher proportion of Positive sentiment, while sources like "Android" could show a mix of Positive, Neutral, and Negative sentiments. This variation suggests that sentiment trends differ across platforms. Additionally, the chart reveals the volume of tweets per source, highlighting how certain platforms, like iPhone, generate more tweets compared to others like "dlvr.it" or "IFTTT". This discrepancy may indicate the popularity of certain sources. From a strategic standpoint, understanding these sentiment trends can be crucial for businesses or analysts, as positive sentiments could indicate more favorable user engagement, while negative sentiments from specific sources may signal user dissatisfaction or areas for improvement. Overall, the graph helps in recognizing patterns that can inform marketing strategies, customer engagement, and platform-related decision-making.
+# This bar chart shows the distribution of tweet sentiment (negative, neutral, and positive) based on the source of tweets. The x-axis represents the tweet sources (e.g., Android, iPhone, others), while the y-axis indicates the number of tweets.
+#From the chart, the majority of tweets are from Android and iPhone devices. For Android, there are more negative tweets compared to positive and neutral ones, with positive tweets being the second most frequent. Similarly, iPhone tweets have a high number of negative sentiments, followed by positive and neutral sentiments. Tweets from other sources (e.g., "others") follow a similar trend with fewer overall counts compared to Android and iPhone.
+#An insight here is that both Android and iPhone are the dominant platforms for tweeting, with negative sentiments being the most common category for both. This could reflect general user sentiment trends, but it might also indicate biases in how users from these platforms engage online.
