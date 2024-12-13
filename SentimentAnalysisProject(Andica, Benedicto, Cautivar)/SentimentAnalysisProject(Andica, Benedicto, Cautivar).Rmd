@@ -50,7 +50,7 @@ start_row <- 1
 end_row <- 1000
 chunk_data <- tweetsDF[start_row:end_row, ]
 
-chunk_data
+head(chunk_data)
 
 write.csv(chunk_data, "cleaned_tweets.csv", row.names = FALSE)
 
@@ -173,7 +173,7 @@ barplot(statusCounts,
         las = 2,              
         cex.axis = 0.15)         
 ```
-#The first graph, a bar plot, illustrates the distribution of tweets across various source platforms. It reveals a highly skewed pattern, where a small number of dominant platforms, such as Twitter for iPhone and Twitter for Android, contribute the majority of tweets. Meanwhile, most other sources show minimal tweet counts. This emphasizes the significant role mainstream platforms play in driving Twitter activity, while less prominent sources have little impact on overall tweet volumes.
+#The bar plot graph, illustrates the distribution of tweets across various source platforms. It reveals a highly skewed pattern, where a small number of dominant platforms, such as Twitter for iPhone and Twitter for Android, contribute the majority of tweets. Meanwhile, most other sources show minimal tweet counts. This emphasizes the significant role mainstream platforms play in driving Twitter activity, while less prominent sources have little impact on overall tweet volumes.
 
 # Chunk of Codes for Cleaning and Making an Graph about the TweetSource(Iphone, Android, others etc.)
 ```{r}
