@@ -93,6 +93,7 @@ if (length(valid_texts) > 0) {
 ```
 #NOTE: for the Wordcloud, it can change by changing also the range you want from the code above.
 
+# This word cloud reflects discussions about the Itaewon tragedy, with larger words like "Itaewon," "tragedy," and "happened" highlighting its focus. Terms such as "people," "victims," "Halloween," and "crowd" provide context, while words like "condolences," "pray," and "mourning" express grief and sympathy. It relates to the October 29, 2022, Itaewon crowd crush in Seoul, where overcrowding during Halloween festivities led to over 150 deaths and widespread mourning.
 
 # Cleaning Dates
 ```{r}
